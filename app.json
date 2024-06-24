@@ -1,0 +1,32 @@
+{
+  "id": "06cc5109-4d92-40e9-912e-8251f9f210a4",
+  "name": "dynamics365-API-Consumption",
+  "publisher": "Saurav Dhyani",
+  "version": "1.0.0.0",
+  "brief": "Code examples and tutorials for consuming APIs in Microsoft Dynamics 365 Business Central.",
+  "description": "Code examples and tutorials for consuming APIs in Microsoft Dynamics 365 Business Central.",
+  "privacyStatement": "https://www.sauravdhyani.com",
+  "EULA": "https://www.sauravdhyani.com",
+  "help": "https://www.sauravdhyani.com",
+  "url": "https://www.sauravdhyani.com",
+  "logo": "image/sauravdhyani.png",
+  "dependencies": [],
+  "screenshots": [],
+  "platform": "1.0.0.0",
+  "application": "23.0.0.0",
+  "idRanges": [
+    {
+      "from": 50000,
+      "to": 50149
+    }
+  ],
+  "resourceExposurePolicy": {
+    "allowDebugging": true,
+    "allowDownloadingSource": true,
+    "includeSourceInSymbolFile": true
+  },
+  "runtime": "12.0",
+  "features": [
+    "NoImplicitWith"
+  ]
+}
