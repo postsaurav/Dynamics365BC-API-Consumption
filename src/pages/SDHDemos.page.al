@@ -49,10 +49,23 @@ page 50000 "SDH Demos"
                     APIManagement.GetRecords();
                 end;
             }
+            action(CreateRecords)
+            {
+                ApplicationArea = All;
+                Caption = 'Create Records';
+                Image = CreateDocument;
+                trigger OnAction()
+                var
+                    APIManagement: Codeunit "SDH API Management";
+                begin
+                    APIManagement.CreateRecords();
+                end;
+            }
         }
         area(Promoted)
         {
             actionref(GetRecords_Ref; GetRecords) { }
+            actionref(CreateRecords_ref; CreateRecords) { }
         }
     }
 }

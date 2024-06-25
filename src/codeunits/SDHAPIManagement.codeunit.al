@@ -17,6 +17,26 @@ codeunit 50000 "SDH API Management"
                 Error('Error: %1', response.ReasonPhrase);
     end;
 
+    procedure CreateRecords()
+    var
+        client: HttpClient;
+        content: HttpContent;
+        request: HttpRequestMessage;
+        response: HttpResponseMessage;
+        OutputString: Text;
+    begin
+        request.SetRequestUri('https://dummy.restapiexample.com/api/v1/create');
+        request.Method := 'Post';
+        content.WriteFrom(GeneratePayload());
+        request.content(content);
+        if client.Send(request, response) then
+            if response.IsSuccessStatusCode() then begin
+                response.Content.ReadAs(OutputString);
+                Message('%1', OutputString);
+            end else
+                Error('Error: %1', response.ReasonPhrase);
+    end;
+
     local procedure ParseEmployeeResponse(OutputString: Text)
     var
         EmployeeJson, EmployeeObject : JsonObject;
@@ -76,5 +96,16 @@ codeunit 50000 "SDH API Management"
         clear(ResponseName);
         clear(ResponseSalary);
         clear(ResponseAge);
+    end;
+
+    local procedure GeneratePayload() Payload: Text
+    var
+        JsonPayload: JsonObject;
+    begin
+        JsonPayload.Add('employee_name', 'test');
+        JsonPayload.Add('employee_salary', 123);
+        JsonPayload.Add('employee_age', 23);
+        JsonPayload.WriteTo(Payload);
+        Message(Payload);
     end;
 }
