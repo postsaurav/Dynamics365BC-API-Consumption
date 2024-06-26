@@ -44,7 +44,7 @@ page 50000 "SDH Demos"
                 Image = GetEntries;
                 trigger OnAction()
                 var
-                    APIManagement: Codeunit "SDH API Management";
+                    APIManagement: Codeunit "SDH API No Auth Mgmt.";
                 begin
                     APIManagement.GetRecords();
                 end;
@@ -56,7 +56,7 @@ page 50000 "SDH Demos"
                 Image = CreateDocument;
                 trigger OnAction()
                 var
-                    APIManagement: Codeunit "SDH API Management";
+                    APIManagement: Codeunit "SDH API No Auth Mgmt.";
                 begin
                     APIManagement.CreateRecords();
                 end;
@@ -68,9 +68,21 @@ page 50000 "SDH Demos"
                 Image = UpdateDescription;
                 trigger OnAction()
                 var
-                    APIManagement: Codeunit "SDH API Management";
+                    APIManagement: Codeunit "SDH API No Auth Mgmt.";
                 begin
                     APIManagement.UpdateRecords(Rec);
+                end;
+            }
+            action(DeleteRecords)
+            {
+                ApplicationArea = All;
+                Caption = 'Delete Records';
+                Image = DeleteRow;
+                trigger OnAction()
+                var
+                    APIManagement: Codeunit "SDH API No Auth Mgmt.";
+                begin
+                    APIManagement.DeleteRecord(Rec);
                 end;
             }
         }
@@ -79,6 +91,7 @@ page 50000 "SDH Demos"
             actionref(GetRecords_Ref; GetRecords) { }
             actionref(CreateRecords_ref; CreateRecords) { }
             actionref(UpdateRecord_ref; UpdateRecords) { }
+            actionref(DeleteRecords_ref; DeleteRecords) { }
         }
     }
 }
