@@ -1,81 +1,49 @@
-codeunit 50000 "SDH API Management"
+codeunit 50000 "SDH API No Auth Mgmt."
 {
     procedure GetRecords()
     var
-        client: HttpClient;
         content: HttpContent;
-        request: HttpRequestMessage;
-        response: HttpResponseMessage;
-        contentHeaders: HttpHeaders;
+        HttpMethod: Enum "Http Method";
         OutputString: Text;
     begin
-        content.GetHeaders(contentHeaders);
-        contentHeaders.Clear();
-        contentHeaders.Add('Content-Type', 'application/json');
-
-        request.Content(content);
-        request.SetRequestUri('https://dummy.restapiexample.com/api/v1/employees');
-        request.Method := 'Get';
-
-        if client.Send(request, response) then
-            if response.IsSuccessStatusCode() then begin
-                response.Content.ReadAs(OutputString);
-                ParseEmployeeResponse(OutputString);
-            end else
-                Error('Error: %1', response.ReasonPhrase);
+        APIRequestResponse.SetRequestHeaders(content, '');
+        OutputString := APIRequestResponse.CallAPIEndpoint(content, 'https://dummy.restapiexample.com/api/v1/employees', HttpMethod::GET);
+        ParseEmployeeResponse(OutputString);
     end;
 
     procedure CreateRecords()
     var
-        client: HttpClient;
         content: HttpContent;
-        contentHeaders: HttpHeaders;
-        request: HttpRequestMessage;
-        response: HttpResponseMessage;
+        HttpMethod: Enum "Http Method";
         OutputString: Text;
     begin
-        content.WriteFrom(GeneratePostPayload());
-        content.GetHeaders(contentHeaders);
-        contentHeaders.Clear();
-        contentHeaders.Add('Content-Type', 'application/json');
-
-        request.content(content);
-        request.SetRequestUri('https://dummy.restapiexample.com/api/v1/create');
-        request.Method := 'Post';
-
-        if client.Send(request, response) then
-            if response.IsSuccessStatusCode() then begin
-                response.Content.ReadAs(OutputString);
-                Message('%1', OutputString);
-            end else
-                Error('Error: %1', response.ReasonPhrase);
+        APIRequestResponse.SetRequestHeaders(content, GeneratePostPayload());
+        OutputString := APIRequestResponse.CallAPIEndpoint(content, 'https://dummy.restapiexample.com/api/v1/create', HttpMethod::POST);
+        Message('%1', OutputString);
     end;
 
     procedure UpdateRecords(DemoData: Record "SDH Demo Table")
     var
-        client: HttpClient;
         content: HttpContent;
-        contentHeaders: HttpHeaders;
-        request: HttpRequestMessage;
-        response: HttpResponseMessage;
+        HttpMethod: Enum "Http Method";
         OutputString: Text;
         TargetURL: Label 'https://dummy.restapiexample.com/api/v1/update/%1';
     begin
-        content.WriteFrom(GeneratePUTPayload());
-        content.GetHeaders(contentHeaders);
-        contentHeaders.Clear();
-        contentHeaders.Add('Content-Type', 'application/json');
+        APIRequestResponse.SetRequestHeaders(content, GeneratePUTPayload());
+        OutputString := APIRequestResponse.CallAPIEndpoint(content, StrSubstNo(TargetURL, DemoData.id), HttpMethod::PUT);
+        Message('%1', OutputString);
+    end;
 
-        request.content(content);
-        request.SetRequestUri(StrSubstNo(TargetURL, DemoData.id));
-        request.Method := 'PUT';
-
-        if client.Send(request, response) then
-            if response.IsSuccessStatusCode() then begin
-                response.Content.ReadAs(OutputString);
-                Message('%1', OutputString);
-            end else
-                Error('Error: %1', response.ReasonPhrase);
+    procedure DeleteRecord(DemoData: Record "SDH Demo Table")
+    var
+        content: HttpContent;
+        HttpMethod: Enum "Http Method";
+        OutputString: Text;
+        TargetURL: Label 'https://dummy.restapiexample.com/api/v1/delete/%1';
+    begin
+        APIRequestResponse.SetRequestHeaders(content, '');
+        OutputString := APIRequestResponse.CallAPIEndpoint(content, StrSubstNo(TargetURL, DemoData.id), HttpMethod::DELETE);
+        Message('%1', OutputString);
     end;
 
     local procedure ParseEmployeeResponse(OutputString: Text)
@@ -158,4 +126,7 @@ codeunit 50000 "SDH API Management"
         JsonPayload.Add('age', 39);
         JsonPayload.WriteTo(Payload);
     end;
+
+    var
+        APIRequestResponse: Codeunit "SDH API Request Response";
 }
