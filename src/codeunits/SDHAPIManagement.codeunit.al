@@ -3,12 +3,20 @@ codeunit 50000 "SDH API Management"
     procedure GetRecords()
     var
         client: HttpClient;
+        content: HttpContent;
         request: HttpRequestMessage;
         response: HttpResponseMessage;
+        contentHeaders: HttpHeaders;
         OutputString: Text;
     begin
+        content.GetHeaders(contentHeaders);
+        contentHeaders.Clear();
+        contentHeaders.Add('Content-Type', 'application/json');
+
+        request.Content(content);
         request.SetRequestUri('https://dummy.restapiexample.com/api/v1/employees');
         request.Method := 'Get';
+
         if client.Send(request, response) then
             if response.IsSuccessStatusCode() then begin
                 response.Content.ReadAs(OutputString);
@@ -21,14 +29,47 @@ codeunit 50000 "SDH API Management"
     var
         client: HttpClient;
         content: HttpContent;
+        contentHeaders: HttpHeaders;
         request: HttpRequestMessage;
         response: HttpResponseMessage;
         OutputString: Text;
     begin
+        content.WriteFrom(GeneratePostPayload());
+        content.GetHeaders(contentHeaders);
+        contentHeaders.Clear();
+        contentHeaders.Add('Content-Type', 'application/json');
+
+        request.content(content);
         request.SetRequestUri('https://dummy.restapiexample.com/api/v1/create');
         request.Method := 'Post';
-        content.WriteFrom(GeneratePayload());
+
+        if client.Send(request, response) then
+            if response.IsSuccessStatusCode() then begin
+                response.Content.ReadAs(OutputString);
+                Message('%1', OutputString);
+            end else
+                Error('Error: %1', response.ReasonPhrase);
+    end;
+
+    procedure UpdateRecords(DemoData: Record "SDH Demo Table")
+    var
+        client: HttpClient;
+        content: HttpContent;
+        contentHeaders: HttpHeaders;
+        request: HttpRequestMessage;
+        response: HttpResponseMessage;
+        OutputString: Text;
+        TargetURL: Label 'https://dummy.restapiexample.com/api/v1/update/%1';
+    begin
+        content.WriteFrom(GeneratePUTPayload());
+        content.GetHeaders(contentHeaders);
+        contentHeaders.Clear();
+        contentHeaders.Add('Content-Type', 'application/json');
+
         request.content(content);
+        request.SetRequestUri(StrSubstNo(TargetURL, DemoData.id));
+        request.Method := 'PUT';
+
         if client.Send(request, response) then
             if response.IsSuccessStatusCode() then begin
                 response.Content.ReadAs(OutputString);
@@ -98,14 +139,23 @@ codeunit 50000 "SDH API Management"
         clear(ResponseAge);
     end;
 
-    local procedure GeneratePayload() Payload: Text
+    local procedure GeneratePostPayload() Payload: Text
     var
         JsonPayload: JsonObject;
     begin
-        JsonPayload.Add('employee_name', 'test');
-        JsonPayload.Add('employee_salary', 123);
-        JsonPayload.Add('employee_age', 23);
+        JsonPayload.Add('name', 'Saurav');
+        JsonPayload.Add('salary', 100);
+        JsonPayload.Add('age', 39);
         JsonPayload.WriteTo(Payload);
-        Message(Payload);
+    end;
+
+    local procedure GeneratePUTPayload() Payload: Text
+    var
+        JsonPayload: JsonObject;
+    begin
+        JsonPayload.Add('name', 'Saurav');
+        JsonPayload.Add('salary', 100);
+        JsonPayload.Add('age', 39);
+        JsonPayload.WriteTo(Payload);
     end;
 }
