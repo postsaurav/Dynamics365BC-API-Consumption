@@ -6,13 +6,17 @@ table 50001 "SDH Rest No Auth Header"
     DrillDownPageId = "SDH Rest No Auths";
     fields
     {
-        field(1; id; Integer)
+        field(1; id; code[50])
         {
             Caption = 'id';
         }
         field(2; name; Text[250])
         {
             Caption = 'name';
+        }
+        field(3; "Not Reserved"; Boolean)
+        {
+            Caption = 'Not Reserved';
         }
     }
     keys

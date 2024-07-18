@@ -1,6 +1,6 @@
 codeunit 50003 "SDH API No Auth Data Mgmt."
 {
-    internal procedure WriteRecordinDatabase(ResponseText: Text)
+    internal procedure WriteRecordinDatabase(ResponseText: Text; IsNotReserved: Boolean)
     var
         RestJsonObject: JsonObject;
         RestJsonArray: JsonArray;
@@ -12,29 +12,30 @@ codeunit 50003 "SDH API No Auth Data Mgmt."
                 Error('Invalid JSON format');
 
         if IsObject then
-            ReadTheObject(RestJsonObject)
+            ReadTheObject(RestJsonObject, IsNotReserved)
         else
-            ReadTheArray(RestJsonArray);
+            ReadTheArray(RestJsonArray, IsNotReserved);
     end;
 
-    local procedure ReadTheObject(RestJsonObject: JsonObject)
+    local procedure ReadTheObject(RestJsonObject: JsonObject; IsNotReserved: Boolean)
     var
         SubRestJsonObject: JsonObject;
         ResultToken: JsonToken;
-        ResponseID, i : Integer;
+        i: Integer;
         parameterkeys: List of [Text];
         Responsename: Text;
+        ResponseID: Code[50];
     begin
         clear(ResponseID);
         clear(Responsename);
 
         RestJsonObject.Get('id', ResultToken);
-        ResponseID := ResultToken.AsValue().AsInteger();
+        ResponseID := ResultToken.AsValue().AsCode();
 
         RestJsonObject.Get('name', ResultToken);
         Responsename := ResultToken.AsValue().AsText();
 
-        WriteHeaderInDatabase(ResponseID, Responsename);
+        WriteHeaderInDatabase(ResponseID, Responsename, IsNotReserved);
 
         if RestJsonObject.Get('data', ResultToken) then
             if ResultToken.IsObject() then begin
@@ -49,23 +50,23 @@ codeunit 50003 "SDH API No Auth Data Mgmt."
         end;
     end;
 
-    local procedure ReadTheArray(RestJsonArray: JsonArray)
+    local procedure ReadTheArray(RestJsonArray: JsonArray; IsNotReserved: Boolean)
     var
         RestJsonToken: JsonToken;
         RestJsonObject: JsonObject;
     begin
         foreach RestJsonToken in RestJsonArray do begin
             RestJsonObject := RestJsonToken.AsObject();
-            ReadTheObject(RestJsonObject);
+            ReadTheObject(RestJsonObject, IsNotReserved);
         end;
 
     end;
 
-    local procedure WriteHeaderInDatabase(ResponseID: Integer; Responsename: Text)
+    local procedure WriteHeaderInDatabase(ResponseID: Code[50]; Responsename: Text; IsNotReserved: Boolean)
     var
         SDHRestNoAuthHeader: Record "SDH Rest No Auth Header";
     begin
-        if ResponseID = 0 then
+        if ResponseID = '' then
             exit;
 
         if SDHRestNoAuthHeader.Get(ResponseID) then
@@ -74,14 +75,15 @@ codeunit 50003 "SDH API No Auth Data Mgmt."
         SDHRestNoAuthHeader.Init();
         SDHRestNoAuthHeader.id := ResponseID;
         SDHRestNoAuthHeader.name := Responsename;
+        sdhRestNoAuthHeader."Not Reserved" := IsNotReserved;
         SDHRestNoAuthHeader.Insert(true);
     end;
 
-    local procedure writeLineinDatabase(ResponseID: Integer; Param: Text; Val: Text)
+    local procedure writeLineinDatabase(ResponseID: Code[50]; Param: Text; Val: Text)
     var
         SDHRestNoAuthLine: Record "SDH Rest No Auth Line";
     begin
-        if ResponseID = 0 then
+        if ResponseID = '' then
             exit;
 
         SDHRestNoAuthLine.SetRange("id", ResponseID);

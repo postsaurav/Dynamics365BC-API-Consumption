@@ -6,7 +6,7 @@ table 50002 "SDH Rest No Auth Line"
     DrillDownPageId = "SDH Rest No Auth Subform";
     fields
     {
-        field(1; id; Integer)
+        field(1; id; code[50])
         {
             Caption = 'id';
             Editable = false;

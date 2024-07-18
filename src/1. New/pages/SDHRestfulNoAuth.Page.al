@@ -23,6 +23,10 @@ page 50002 "SDH Rest No Auth"
                 {
                     ToolTip = 'Specifies the value of the name field.';
                 }
+                field("Not Reserved"; Rec."Not Reserved")
+                {
+                    ToolTip = 'Specifies the value of the Not Reserved field.', Comment = '%';
+                }
             }
             part(Lines; "SDH Rest No Auth Subform")
             {
