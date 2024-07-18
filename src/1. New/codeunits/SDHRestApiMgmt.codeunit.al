@@ -3,32 +3,47 @@ codeunit 50002 "SDH Rest Api Mgmt."
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := MakeRequest(URLToAccess, HttpMethod::GET, ResponseStatus);
+        ResponseMsg := MakeRequest(URLToAccess, '', HttpMethod::GET, ResponseStatus);
         ResponseMsg.Content.ReadAs(ResponseText);
         ProcessResponse(ResponseText, HttpMethod::GET);
     end;
 
     procedure PostRecord(URLToAccess: Text)
+    var
+        PayloadGenerator: Codeunit "SDH No Auth Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
-
+        ResponseMsg := MakeRequest(URLToAccess, PayloadGenerator.GenratePostPayload(), HttpMethod::POST, ResponseStatus);
+        ResponseMsg.Content.ReadAs(ResponseText);
+        ProcessResponse(ResponseText, HttpMethod::POST);
     end;
 
     procedure PutRecord(URLToAccess: Text)
+    var
+        PayloadGenerator: Codeunit "SDH No Auth Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
-
+        ResponseMsg := MakeRequest(URLToAccess, PayloadGenerator.GenratePUtPayload(), HttpMethod::PUT, ResponseStatus);
+        ResponseMsg.Content.ReadAs(ResponseText);
+        ProcessResponse(ResponseText, HttpMethod::PUT);
     end;
 
     procedure PatchRecord(URLToAccess: Text)
+    var
+        PayloadGenerator: Codeunit "SDH No Auth Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
-
+        ResponseMsg := MakeRequest(URLToAccess, PayloadGenerator.GenratePatchPayload(), HttpMethod::PATCH, ResponseStatus);
+        ResponseMsg.Content.ReadAs(ResponseText);
+        ProcessResponse(ResponseText, HttpMethod::PATCH);
     end;
 
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
+        ResponseMsg := MakeRequest(URLToAccess, '', HttpMethod::DELETE, ResponseStatus);
+        ResponseMsg.Content.ReadAs(ResponseText);
+        ProcessResponse(ResponseText, HttpMethod::DELETE);
     end;
 
     local procedure CheckMandatoryAndReset(URLToAccess: Text)
@@ -42,12 +57,15 @@ codeunit 50002 "SDH Rest Api Mgmt."
         Clear(ResponseText);
     end;
 
-    local procedure MakeRequest(URLToAccess: Text; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
+    local procedure MakeRequest(URLToAccess: Text; payload: Text; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
     var
         client: HttpClient;
         contentHeaders: HttpHeaders;
         request: HttpRequestMessage;
     begin
+        if payload <> '' then
+            content.WriteFrom(payload);
+
         content.GetHeaders(contentHeaders);
         contentHeaders.Clear();
         contentHeaders.Add('Content-Type', 'application/json');
@@ -76,7 +94,11 @@ codeunit 50002 "SDH Rest Api Mgmt."
     begin
         case HttpMethod of
             HttpMethod::GET:
-                SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText);
+                SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, false);
+            HttpMethod::POST:
+                SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, true);
+            HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
+                Message('%1', ResponseText);
         end;
     end;
 

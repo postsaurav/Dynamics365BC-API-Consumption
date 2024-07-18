@@ -24,6 +24,10 @@ page 50004 "SDH Rest No Auths"
                 {
                     ToolTip = 'Specifies the value of the name field.';
                 }
+                field("Not Reserved"; Rec."Not Reserved")
+                {
+                    ToolTip = 'Specifies the value of the Not Reserved field.', Comment = '%';
+                }
             }
         }
     }
