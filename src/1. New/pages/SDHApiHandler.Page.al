@@ -100,6 +100,23 @@ page 50005 "SDH API Handler"
         }
     }
 
+    actions
+    {
+        area(Navigation)
+        {
+            action(LogEntries)
+            {
+                ApplicationArea = All;
+                Image = ErrorLog;
+                RunObject = Page "SDH API Log Entries";
+            }
+        }
+        area(Promoted)
+        {
+            actionref(LogEntries_Ref; LogEntries) { }
+        }
+    }
+
     trigger OnOpenPage()
     begin
         UrlToAccess := 'https://api.restful-api.dev/objects';
