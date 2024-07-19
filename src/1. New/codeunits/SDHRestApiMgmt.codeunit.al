@@ -86,6 +86,7 @@ codeunit 50002 "SDH Rest Api Mgmt."
                 request.Method := 'DELETE';
         end;
         ResponseStatus := client.Send(request, response);
+        LogApiTransaction(URLToAccess, HttpMethod, ResponseStatus, request, response);
     end;
 
     local procedure ProcessResponse(ResponseText: Text; HttpMethod: Enum System.RestClient."Http Method")
@@ -100,6 +101,16 @@ codeunit 50002 "SDH Rest Api Mgmt."
             HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
                 Message('%1', ResponseText);
         end;
+    end;
+
+    local procedure LogApiTransaction(URLToAccess: Text; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean; request: HttpRequestMessage; var response: HttpResponseMessage)
+    var
+        LogEntry: Record "SDH API Log Entries";
+        RequestInstream, ResponseInstream : InStream;
+    begin
+        request.Content.ReadAs(RequestInstream);
+        response.Content.ReadAs(ResponseInstream);
+        LogEntry.AddNewLogEntry(URLToAccess, HttpMethod, RequestInstream, ResponseInstream, response.HttpStatusCode, ResponseStatus);
     end;
 
 
