@@ -1,4 +1,4 @@
-table 50003 "SDH API Log Entries"
+table 50000 "SDH API Log Entries"
 {
     Caption = 'API Log Entries';
     DataClassification = CustomerContent;

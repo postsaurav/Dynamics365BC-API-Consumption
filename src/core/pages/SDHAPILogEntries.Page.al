@@ -1,4 +1,4 @@
-page 50006 "SDH API Log Entries"
+page 50001 "SDH API Log Entries"
 {
     ApplicationArea = All;
     Caption = 'API Log Entries';

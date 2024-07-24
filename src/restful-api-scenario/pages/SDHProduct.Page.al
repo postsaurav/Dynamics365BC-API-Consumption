@@ -1,11 +1,11 @@
-page 50002 "SDH Rest No Auth"
+page 50005 "SDH Product"
 {
     ApplicationArea = All;
-    Caption = 'Rest No Auth';
+    Caption = 'Product';
     PageType = Document;
     RefreshOnActivate = true;
     DataCaptionFields = id, name;
-    SourceTable = "SDH Rest No Auth Header";
+    SourceTable = "SDH Product Header";
 
     layout
     {
@@ -28,7 +28,7 @@ page 50002 "SDH Rest No Auth"
                     ToolTip = 'Specifies the value of the Not Reserved field.', Comment = '%';
                 }
             }
-            part(Lines; "SDH Rest No Auth Subform")
+            part(Lines; "SDH Product Subform")
             {
                 ApplicationArea = All;
                 SubPageLink = "id" = field("id");

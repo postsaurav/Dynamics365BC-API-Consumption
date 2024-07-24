@@ -1,9 +1,9 @@
-page 50003 "SDH Rest No Auth Subform"
+page 50006 "SDH Product Subform"
 {
     ApplicationArea = All;
     Caption = 'Lines';
     PageType = ListPart;
-    SourceTable = "SDH Rest No Auth Line";
+    SourceTable = "SDH Product Lines";
 
     layout
     {

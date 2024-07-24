@@ -1,16 +1,16 @@
-table 50002 "SDH Rest No Auth Line"
+table 50003 "SDH Product Lines"
 {
-    Caption = 'Rest No Auth Line';
+    Caption = 'Product Lines';
     DataClassification = CustomerContent;
-    LookupPageId = "SDH Rest No Auth Subform";
-    DrillDownPageId = "SDH Rest No Auth Subform";
+    LookupPageId = "SDH Product Subform";
+    DrillDownPageId = "SDH Product Subform";
     fields
     {
         field(1; id; code[50])
         {
             Caption = 'id';
             Editable = false;
-            TableRelation = "SDH Rest No Auth Header"."id";
+            TableRelation = "SDH Product Header"."id";
         }
         field(2; "Line No."; Integer)
         {
@@ -36,12 +36,12 @@ table 50002 "SDH Rest No Auth Line"
 
     trigger OnInsert()
     var
-        Lines: Record "SDH Rest No Auth Line";
+        ProductLines: Record "SDH Product Lines";
     begin
         if Rec."Line No." = 0 then begin
-            Lines.SetRange("id", Rec."id");
-            if Lines.FindLast then
-                Rec."Line No." := Lines."Line No." + 10000
+            ProductLines.SetRange("id", Rec."id");
+            if ProductLines.FindLast then
+                Rec."Line No." := ProductLines."Line No." + 10000
             else
                 Rec."Line No." := 10000;
         end;
