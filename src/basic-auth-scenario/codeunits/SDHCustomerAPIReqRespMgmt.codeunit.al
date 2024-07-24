@@ -1,54 +1,53 @@
-codeunit 50001 "SDH Employee API Req Resp Mgmt"
+codeunit 50007 "SDH Customer API Req Resp Mgmt"
 {
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateGetPayload(), HttpMethod::GET, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::GET);
     end;
 
     procedure PostRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GeneratePostPayload(), HttpMethod::POST, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::POST);
     end;
 
     procedure PutRecord(URLToAccess: Text)
     begin
-        CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GeneratePutPayload(), HttpMethod::PUT, ResponseStatus);
-        ProcessResponse(ResponseMsg, HttpMethod::PUT);
+        Error('This API does not support patch request.');
     end;
 
     procedure PatchRecord(URLToAccess: Text)
     begin
-        Error('This API does not support patch request.');
+        CheckMandatoryAndReset(URLToAccess);
+        ProcessResponse(ResponseMsg, HttpMethod::PATCH);
     end;
 
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateDeletePayload(), HttpMethod::DELETE, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::DELETE);
     end;
 
     local procedure ProcessResponse(ResponseMsg: HttpResponseMessage; HttpMethod: Enum System.RestClient."Http Method")
     var
-        SDHDummyRestApiDataMgmt: Codeunit "SDH Employee API Data Mgmt.";
+        //    SDHAPIDataMgmt: Codeunit "SDH Product API Data Mgmt.";
         ResponseText: Text;
     begin
         ResponseMsg.Content.ReadAs(ResponseText);
 
         if not ResponseMsg.IsSuccessStatusCode then
-            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText);
-
-        case HttpMethod of
-            HttpMethod::GET:
-                SDHDummyRestApiDataMgmt.ParseEmployeeResponse(ResponseText);
-            HttpMethod::POST, HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
-                Message('%1', ResponseText);
-        end;
+            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText)
+        else
+            Message('%1', ResponseText);
+        // case HttpMethod of
+        //     HttpMethod::GET:
+        //         SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, false);
+        //     HttpMethod::POST:
+        //         SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, true);
+        //     HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
+        //         Message('%1', ResponseText);
+        // end;
     end;
 
     local procedure CheckMandatoryAndReset(URLToAccess: Text)
@@ -66,8 +65,8 @@ codeunit 50001 "SDH Employee API Req Resp Mgmt"
 
     var
         SDHRestApiMgmt: Codeunit "SDH Rest API Mgmt.";
-        PayloadGenerator: Codeunit "SDH Employee API Payload Mgmt";
         ResponseMsg: HttpResponseMessage;
         HttpMethod: Enum "Http Method";
         ResponseStatus: Boolean;
+
 }

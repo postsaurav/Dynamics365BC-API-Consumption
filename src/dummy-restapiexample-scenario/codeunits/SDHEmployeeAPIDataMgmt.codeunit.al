@@ -11,9 +11,12 @@ codeunit 50003 "SDH Employee API Data Mgmt."
     begin
         EmployeeJson.ReadFrom(OutputString);
 
-        if EmployeeJson.Get('status', StatusJsonToken) then
-            if StatusJsonToken.AsValue().AsText() <> 'success' then
-                exit;
+        if not EmployeeJson.Get('status', StatusJsonToken) then
+            Error('Invalid Response!');
+
+        if StatusJsonToken.AsValue().AsText() <> 'success' then
+            Error('Invalid Response!');
+
         if EmployeeJson.Get('data', EmployeesToken) then
             if EmployeesToken.IsArray() then
                 EmployessArray := EmployeesToken.AsArray();
