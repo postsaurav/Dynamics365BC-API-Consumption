@@ -1,9 +1,9 @@
-table 50001 "SDH Rest No Auth Header"
+table 50002 "SDH Product Header"
 {
-    Caption = 'Rest No Auth Header';
+    Caption = 'Product Header';
     DataClassification = CustomerContent;
-    LookupPageId = "SDH Rest No Auths";
-    DrillDownPageId = "SDH Rest No Auths";
+    LookupPageId = "SDH Products";
+    DrillDownPageId = "SDH Products";
     fields
     {
         field(1; id; code[50])
@@ -28,18 +28,18 @@ table 50001 "SDH Rest No Auth Header"
     }
     trigger OnDelete()
     var
-        Lines: Record "SDH Rest No Auth Line";
+        ProductLines: Record "SDH Product Lines";
     begin
-        Lines.SetRange(id, Rec.id);
-        if not Lines.IsEmpty() then
-            Lines.DeleteAll(true);
+        ProductLines.SetRange(id, Rec.id);
+        if not ProductLines.IsEmpty() then
+            ProductLines.DeleteAll(true);
     end;
 
     procedure DeleteAllImported()
     var
-        Header: Record "SDH Rest No Auth Header";
+        ProductHeader: Record "SDH Product Header";
     begin
-        if not Header.IsEmpty() then
-            Header.DeleteAll(true);
+        if not ProductHeader.IsEmpty() then
+            ProductHeader.DeleteAll(true);
     end;
 }

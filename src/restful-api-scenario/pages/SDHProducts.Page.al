@@ -1,10 +1,10 @@
-page 50004 "SDH Rest No Auths"
+page 50004 "SDH Products"
 {
-    Caption = 'Rest No Auths';
+    Caption = 'Products';
     PageType = List;
     DataCaptionFields = id, name;
-    CardPageId = "SDH Rest No Auth";
-    SourceTable = "SDH Rest No Auth Header";
+    CardPageId = "SDH Product";
+    SourceTable = "SDH Product Header";
     Editable = false;
     RefreshOnActivate = true;
     ApplicationArea = All;

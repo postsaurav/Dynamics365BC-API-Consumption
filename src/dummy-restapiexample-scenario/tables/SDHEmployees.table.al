@@ -1,9 +1,9 @@
-table 50000 "SDH Demo Table"
+table 50001 "SDH Employees"
 {
-    Caption = 'Demo Table';
+    Caption = 'Employees';
     DataClassification = CustomerContent;
-    DrillDownPageId = "SDH Demos";
-    LookupPageId = "SDH Demos";
+    DrillDownPageId = "SDH Employees";
+    LookupPageId = "SDH Employees";
     DataCaptionFields = id, employee_name;
     fields
     {
@@ -31,4 +31,12 @@ table 50000 "SDH Demo Table"
             Clustered = true;
         }
     }
+
+    internal procedure DeleteAllImported()
+    var
+        Employees: Record "SDH Employees";
+    begin
+        if not Employees.IsEmpty() then
+            Employees.DeleteAll(true);
+    end;
 }

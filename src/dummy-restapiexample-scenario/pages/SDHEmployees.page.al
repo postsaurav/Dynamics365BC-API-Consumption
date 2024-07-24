@@ -1,18 +1,19 @@
-page 50001 "SDH Demo"
+page 50002 "SDH Employees"
 {
     ApplicationArea = All;
-    Caption = 'Demo';
-    PageType = Card;
-    SourceTable = "SDH Demo Table";
+    Caption = 'Employees';
+    PageType = List;
+    Editable = false;
+    SourceTable = "SDH Employees";
+    CardPageId = "SDH Employee";
+    UsageCategory = Lists;
 
     layout
     {
         area(Content)
         {
-            group(General)
+            repeater(General)
             {
-                Caption = 'General';
-
                 field(id; Rec.id)
                 {
                     ToolTip = 'Specifies the value of the ID field.';
@@ -30,6 +31,27 @@ page 50001 "SDH Demo"
                     ToolTip = 'Specifies the value of the Employee Salary field.';
                 }
             }
+        }
+    }
+    actions
+    {
+        area(Processing)
+        {
+            action(DeleteImported)
+            {
+                ApplicationArea = All;
+                Caption = 'Delete All';
+                Image = DeleteAllBreakpoints;
+                trigger OnAction()
+                begin
+                    if Confirm('Do you want to delete all record?') then
+                        Rec.DeleteAllImported();
+                end;
+            }
+        }
+        area(Promoted)
+        {
+            actionref(DeleteImported_Ref; DeleteImported) { }
         }
     }
 }

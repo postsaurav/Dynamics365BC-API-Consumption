@@ -1,4 +1,4 @@
-codeunit 50003 "SDH API No Auth Data Mgmt."
+codeunit 50006 "SDH Product API Data Mgmt."
 {
     internal procedure WriteRecordinDatabase(ResponseText: Text; IsNotReserved: Boolean)
     var
@@ -64,7 +64,7 @@ codeunit 50003 "SDH API No Auth Data Mgmt."
 
     local procedure WriteHeaderInDatabase(ResponseID: Code[50]; Responsename: Text; IsNotReserved: Boolean)
     var
-        SDHRestNoAuthHeader: Record "SDH Rest No Auth Header";
+        SDHRestNoAuthHeader: Record "SDH Product Header";
     begin
         if ResponseID = '' then
             exit;
@@ -81,7 +81,7 @@ codeunit 50003 "SDH API No Auth Data Mgmt."
 
     local procedure writeLineinDatabase(ResponseID: Code[50]; Param: Text; Val: Text)
     var
-        SDHRestNoAuthLine: Record "SDH Rest No Auth Line";
+        SDHRestNoAuthLine: Record "SDH Product Lines";
     begin
         if ResponseID = '' then
             exit;

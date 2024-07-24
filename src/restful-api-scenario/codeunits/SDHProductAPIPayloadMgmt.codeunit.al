@@ -1,4 +1,4 @@
-codeunit 50004 "SDH No Auth Payload Mgmt."
+codeunit 50005 "SDH Product API Payload Mgmt."
 {
     internal procedure GenratePostPayload() payload: Text
     var
