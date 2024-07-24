@@ -3,53 +3,48 @@ codeunit 50004 "SDH Product API Req Resp Mgmt"
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, '', HttpMethod::GET, ResponseStatus);
-        ResponseMsg.Content.ReadAs(ResponseText);
-        ProcessResponse(ResponseText, HttpMethod::GET);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateGetPayload(), HttpMethod::GET, ResponseStatus);
+        ProcessResponse(ResponseMsg, HttpMethod::GET);
     end;
 
     procedure PostRecord(URLToAccess: Text)
-    var
-        PayloadGenerator: Codeunit "SDH Product API Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
         ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenratePostPayload(), HttpMethod::POST, ResponseStatus);
-        ResponseMsg.Content.ReadAs(ResponseText);
-        ProcessResponse(ResponseText, HttpMethod::POST);
+        ProcessResponse(ResponseMsg, HttpMethod::POST);
     end;
 
     procedure PutRecord(URLToAccess: Text)
-    var
-        PayloadGenerator: Codeunit "SDH Product API Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenratePUtPayload(), HttpMethod::PUT, ResponseStatus);
-        ResponseMsg.Content.ReadAs(ResponseText);
-        ProcessResponse(ResponseText, HttpMethod::PUT);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenratePutPayload(), HttpMethod::PUT, ResponseStatus);
+        ProcessResponse(ResponseMsg, HttpMethod::PUT);
     end;
 
     procedure PatchRecord(URLToAccess: Text)
-    var
-        PayloadGenerator: Codeunit "SDH Product API Payload Mgmt.";
     begin
         CheckMandatoryAndReset(URLToAccess);
         ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenratePatchPayload(), HttpMethod::PATCH, ResponseStatus);
-        ResponseMsg.Content.ReadAs(ResponseText);
-        ProcessResponse(ResponseText, HttpMethod::PATCH);
+        ProcessResponse(ResponseMsg, HttpMethod::PATCH);
     end;
 
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, '', HttpMethod::DELETE, ResponseStatus);
-        ResponseMsg.Content.ReadAs(ResponseText);
-        ProcessResponse(ResponseText, HttpMethod::DELETE);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateDeletePayload(), HttpMethod::DELETE, ResponseStatus);
+        ProcessResponse(ResponseMsg, HttpMethod::DELETE);
     end;
 
-    local procedure ProcessResponse(ResponseText: Text; HttpMethod: Enum System.RestClient."Http Method")
+    local procedure ProcessResponse(ResponseMsg: HttpResponseMessage; HttpMethod: Enum System.RestClient."Http Method")
     var
         SDHAPIDataMgmt: Codeunit "SDH Product API Data Mgmt.";
+        ResponseText: Text;
     begin
+        ResponseMsg.Content.ReadAs(ResponseText);
+
+        if not ResponseMsg.IsSuccessStatusCode then
+            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText);
+
         case HttpMethod of
             HttpMethod::GET:
                 SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, false);
@@ -71,13 +66,12 @@ codeunit 50004 "SDH Product API Req Resp Mgmt"
         Clear(ResponseMsg);
         Clear(HttpMethod);
         Clear(ResponseStatus);
-        Clear(ResponseText);
     end;
 
     var
         SDHRestApiMgmt: Codeunit "SDH Rest API Mgmt.";
+        PayloadGenerator: Codeunit "SDH Product API Payload Mgmt.";
         ResponseMsg: HttpResponseMessage;
         HttpMethod: Enum "Http Method";
         ResponseStatus: Boolean;
-        ResponseText: Text;
 }

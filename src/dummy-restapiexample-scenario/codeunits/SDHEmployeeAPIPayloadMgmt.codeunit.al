@@ -1,5 +1,10 @@
 codeunit 50002 "SDH Employee API Payload Mgmt"
 {
+    internal procedure GenrateGetPayload() payload: Text
+    begin
+        payload := '';
+    end;
+
     internal procedure GeneratePostPayload() Payload: Text
     var
         JsonPayload: JsonObject;
@@ -10,7 +15,7 @@ codeunit 50002 "SDH Employee API Payload Mgmt"
         JsonPayload.WriteTo(Payload);
     end;
 
-    internal procedure GeneratePUTPayload() Payload: Text
+    internal procedure GeneratePutPayload() Payload: Text
     var
         JsonPayload: JsonObject;
     begin
@@ -20,4 +25,13 @@ codeunit 50002 "SDH Employee API Payload Mgmt"
         JsonPayload.WriteTo(Payload);
     end;
 
+    internal procedure GenratePatchPayload() payload: Text
+    begin
+        payload := '';
+    end;
+
+    internal procedure GenrateDeletePayload() payload: Text
+    begin
+        payload := '';
+    end;
 }

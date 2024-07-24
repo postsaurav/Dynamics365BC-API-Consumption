@@ -98,6 +98,27 @@ page 50000 "SDH API Handler"
                             end;
                         }
                     }
+                    grid(Group1Patch)
+                    {
+                        GridLayout = Columns;
+                        field(Group1PatchSetURL; PatchLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                NoAuthUrlToAccess := 'https://dummy.restapiexample.com/api/v1/update/%1';
+                            end;
+                        }
+                        field(Group1PatchExecute; PatchLabel)
+                        {
+                            ApplicationArea = All;
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                DummyRestAPIReqResMgmt.PatchRecord(DummyUrlToAccess);
+                            end;
+                        }
+                    }
                     grid(Group1Delete)
                     {
                         GridLayout = Columns;
@@ -255,6 +276,150 @@ page 50000 "SDH API Handler"
                     }
                 }
             }
+            group(Group3)
+            {
+                Caption = 'Basic Auth API';
+                Group(Group3Refrences)
+                {
+                    Caption = 'References';
+                    field(Group3AuthUrl; BasicAuthUrl)
+                    {
+                        Caption = 'Website';
+                        Editable = false;
+                        ExtendedDatatype = Url;
+                    }
+                    field(Group3URLToAccess; BasicAuthUrlToAccess)
+                    {
+                        Caption = 'Execute URL';
+                        ShowMandatory = true;
+                        ExtendedDatatype = Url;
+                    }
+                    field(Username; Username)
+                    {
+                        Caption = 'User Name';
+                        ShowMandatory = true;
+                    }
+                    field(Password; Password)
+                    {
+                        Caption = 'Password';
+                        ExtendedDatatype = Masked;
+                        ShowMandatory = true;
+                    }
+                    field(Group3output; BasicAuthResponse)
+                    {
+                        ApplicationArea = All;
+                        ExtendedDatatype = Url;
+                        Editable = false;
+                        Caption = 'Output';
+                    }
+                }
+                group(Group3actions)
+                {
+                    Caption = 'Actions';
+                    grid(Group3Get)
+                    {
+                        GridLayout = Columns;
+                        field(Group3GetSetURL; GetLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthUrlToAccess := 'http://localhost:7048/BC240/api/v2.0/companies(9de49c12-b738-ef11-8e52-6045bdaca463)/customers';
+                            end;
+                        }
+                        field(Group3GetExecute; GetLabel)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthReqResMgmt.GetRecords(BasicAuthUrlToAccess);
+                            end;
+                        }
+                    }
+                    grid(Group3Post)
+                    {
+                        GridLayout = Columns;
+                        field(Group3PostSetURL; PostLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthUrlToAccess := 'http://localhost:7048/BC240/api/v2.0/companies(9de49c12-b738-ef11-8e52-6045bdaca463)/customers';
+                            end;
+                        }
+                        field(Group3PostExecute; PostLabel)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthReqResMgmt.PostRecord(BasicAuthUrlToAccess);
+                            end;
+                        }
+                    }
+                    grid(Group3Put)
+                    {
+                        GridLayout = Columns;
+                        field(Group3PutSetURL; PutLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthUrlToAccess := 'http://localhost:7048/BC240/api/v2.0/companies(9de49c12-b738-ef11-8e52-6045bdaca463)/customers';
+                            end;
+                        }
+                        field(Group3PutExecute; PutLabel)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthReqResMgmt.PutRecord(BasicAuthUrlToAccess);
+                            end;
+                        }
+                    }
+                    grid(Group3Patch)
+                    {
+                        GridLayout = Columns;
+                        field(Group3PatchSetURL; PatchLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthUrlToAccess := 'http://localhost:7048/BC240/api/v2.0/companies(9de49c12-b738-ef11-8e52-6045bdaca463)/customers(%1)';
+                            end;
+                        }
+                        field(Group3PatchExecute; PatchLabel)
+                        {
+                            ApplicationArea = All;
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthReqResMgmt.PatchRecord(BasicAuthUrlToAccess);
+                            end;
+                        }
+                    }
+                    grid(Group3Delete)
+                    {
+                        GridLayout = Columns;
+                        field(Group3DeleteSetURL; DeleteLabelURL)
+                        {
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthUrlToAccess := 'http://localhost:7048/BC240/api/v2.0/companies(9de49c12-b738-ef11-8e52-6045bdaca463)/customers(%1)';
+                            end;
+                        }
+                        field(Group3DeleteExecute; DeleteLabel)
+                        {
+                            ApplicationArea = All;
+                            ShowCaption = false;
+                            trigger OnDrillDown()
+                            begin
+                                BasicAuthReqResMgmt.DeleteRecord(BasicAuthUrlToAccess);
+                            end;
+                        }
+                    }
+                }
+            }
         }
     }
     actions
@@ -278,15 +443,19 @@ page 50000 "SDH API Handler"
     begin
         NoAuthResponse := GetUrl(ClientType::Web, CompanyName, ObjectType::Page, Page::"SDH Products");
         DummyNoAuthResponse := GetUrl(ClientType::Web, CompanyName, ObjectType::Page, Page::"SDH Employees");
+        BasicAuthResponse := GetUrl(ClientType::Web, CompanyName, ObjectType::Page, Page::"SDH Customer");
     end;
 
     var
+        BasicAuthReqResMgmt: Codeunit "SDH Customer API Req Resp Mgmt";
         APINoAuthReqResMgmt: Codeunit "SDH Product API Req Resp Mgmt";
         DummyRestAPIReqResMgmt: Codeunit "SDH Employee API Req Resp Mgmt";
-        NoAuthUrlToAccess, DummyUrlToAccess : Text[1024];
-        NoAuthResponse, DummyNoAuthResponse : Text[1024];
+        NoAuthUrlToAccess, DummyUrlToAccess, BasicAuthUrlToAccess : Text[1024];
+        NoAuthResponse, DummyNoAuthResponse, BasicAuthResponse : Text[1024];
+        Username, Password : Text;
         NoAuthUrl: Label 'https://restful-api.dev/';
         DummyAuthUrl: Label 'https://dummy.restapiexample.com/';
+        BasicAuthUrl: Label 'https://learn.microsoft.com/en-us/dynamics365/business-central/dev-itpro/api-reference/v2.0/resources/dynamics_customer';
         ResetURL: Label 'Reset URL';
         GetLabel: Label 'Get';
         PostLabel: Label 'Post';
