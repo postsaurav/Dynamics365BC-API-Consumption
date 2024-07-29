@@ -1,18 +1,9 @@
 codeunit 50000 "SDH Rest Api Mgmt."
 {
-    procedure MakeRequest(URLToAccess: Text; payload: Text; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
+    procedure MakeRequest(URLToAccess: Text; client: HttpClient; content: HttpContent; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
     var
-        client: HttpClient;
-        contentHeaders: HttpHeaders;
         request: HttpRequestMessage;
     begin
-        if payload <> '' then
-            content.WriteFrom(payload);
-
-        content.GetHeaders(contentHeaders);
-        contentHeaders.Clear();
-        contentHeaders.Add('Content-Type', 'application/json');
-
         request.Content := content;
         request.SetRequestUri(URLToAccess);
 
