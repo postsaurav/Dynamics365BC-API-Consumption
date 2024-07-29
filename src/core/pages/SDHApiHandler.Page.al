@@ -332,6 +332,7 @@ page 50000 "SDH API Handler"
                             ShowCaption = false;
                             trigger OnDrillDown()
                             begin
+                                BasicAuthReqResMgmt.SetUsernameandPassword(Username, Password);
                                 BasicAuthReqResMgmt.GetRecords(BasicAuthUrlToAccess);
                             end;
                         }

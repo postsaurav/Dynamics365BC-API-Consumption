@@ -3,6 +3,7 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateGetPayload(), client), HttpMethod::GET, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::GET);
     end;
 
@@ -63,10 +64,40 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
         Clear(ResponseStatus);
     end;
 
+    local procedure GetContentwithHeader(payload: Text; var updateclient: HttpClient) content: HttpContent
+    var
+        contentHeaders: HttpHeaders;
+    begin
+        if payload <> '' then
+            content.WriteFrom(payload);
+
+        contentHeaders := updateclient.DefaultRequestHeaders();
+        contentHeaders.Add('Authorization', GetAuthroizationHeader());
+        contentHeaders.Add('Accept', 'application/json');
+    end;
+
+    local procedure GetAuthroizationHeader() AuthString: Text
+    var
+        Base64Convert: Codeunit "Base64 Convert";
+    begin
+        AuthString := StrSubstNo('%1:%2', username, password);
+        AuthString := Base64Convert.ToBase64(AuthString);
+        AuthString := StrSubstNo('Basic %1', AuthString);
+    end;
+
+    procedure SetUsernameandPassword(PassedUsername: Text; Passedpassword: text)
+    begin
+        username := PassedUsername;
+        Password := Passedpassword;
+    end;
+
     var
         SDHRestApiMgmt: Codeunit "SDH Rest API Mgmt.";
+        PayloadGenerator: Codeunit "SDH Customer API Payload Mgmt";
         ResponseMsg: HttpResponseMessage;
         HttpMethod: Enum "Http Method";
+        client: HttpClient;
         ResponseStatus: Boolean;
+        username, password : Text;
 
 }

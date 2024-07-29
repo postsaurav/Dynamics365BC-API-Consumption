@@ -3,21 +3,21 @@ codeunit 50001 "SDH Employee API Req Resp Mgmt"
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateGetPayload(), HttpMethod::GET, ResponseStatus);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateGetPayload(), client), HttpMethod::GET, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::GET);
     end;
 
     procedure PostRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GeneratePostPayload(), HttpMethod::POST, ResponseStatus);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GeneratePostPayload(), client), HttpMethod::POST, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::POST);
     end;
 
     procedure PutRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GeneratePutPayload(), HttpMethod::PUT, ResponseStatus);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GeneratePutPayload(), client), HttpMethod::PUT, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::PUT);
     end;
 
@@ -29,7 +29,7 @@ codeunit 50001 "SDH Employee API Req Resp Mgmt"
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, PayloadGenerator.GenrateDeletePayload(), HttpMethod::DELETE, ResponseStatus);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateDeletePayload(), client), HttpMethod::DELETE, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::DELETE);
     end;
 
@@ -64,10 +64,23 @@ codeunit 50001 "SDH Employee API Req Resp Mgmt"
         Clear(ResponseStatus);
     end;
 
+    procedure GetContentwithHeader(payload: Text; var updateclient: HttpClient) content: HttpContent
+    var
+        contentHeaders: HttpHeaders;
+    begin
+        if payload <> '' then
+            content.WriteFrom(payload);
+
+        content.GetHeaders(contentHeaders);
+        contentHeaders.Clear();
+        contentHeaders.Add('Content-Type', 'application/json');
+    end;
+
     var
         SDHRestApiMgmt: Codeunit "SDH Rest API Mgmt.";
         PayloadGenerator: Codeunit "SDH Employee API Payload Mgmt";
         ResponseMsg: HttpResponseMessage;
         HttpMethod: Enum "Http Method";
         ResponseStatus: Boolean;
+        client: HttpClient;
 }
