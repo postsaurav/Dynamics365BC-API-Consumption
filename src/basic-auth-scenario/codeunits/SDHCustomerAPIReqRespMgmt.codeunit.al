@@ -3,7 +3,7 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateGetPayload(), client), HttpMethod::GET, ResponseStatus);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateGetPayload()), HttpMethod::GET, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::GET);
     end;
 
@@ -64,14 +64,16 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
         Clear(ResponseStatus);
     end;
 
-    local procedure GetContentwithHeader(payload: Text; var updateclient: HttpClient) content: HttpContent
+    local procedure GetContentwithHeader(payload: Text) content: HttpContent
     var
         contentHeaders: HttpHeaders;
     begin
+        clear(client);
+
         if payload <> '' then
             content.WriteFrom(payload);
 
-        contentHeaders := updateclient.DefaultRequestHeaders();
+        contentHeaders := client.DefaultRequestHeaders();
         contentHeaders.Add('Authorization', GetAuthroizationHeader());
         contentHeaders.Add('Accept', 'application/json');
     end;
