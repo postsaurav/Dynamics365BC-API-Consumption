@@ -15,6 +15,7 @@ codeunit 50006 "SDH Product API Data Mgmt."
             ReadTheObject(RestJsonObject, IsNotReserved)
         else
             ReadTheArray(RestJsonArray, IsNotReserved);
+        Message('Response Processed Succesfully!');
     end;
 
     local procedure ReadTheObject(RestJsonObject: JsonObject; IsNotReserved: Boolean)
@@ -98,6 +99,4 @@ codeunit 50006 "SDH Product API Data Mgmt."
         SDHRestNoAuthLine.Value := Val;
         SDHRestNoAuthLine.Insert(true);
     end;
-
-
 }
