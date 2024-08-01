@@ -10,6 +10,9 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
     procedure PostRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
+        //MakeRequest(URLToAccess: Text; request: HttpRequestMessage; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePostPayload()), HttpMethod::POST, ResponseStatus);
+        //ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenratePostPayload()), HttpMethod::POST, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::POST);
     end;
 
@@ -21,34 +24,35 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
     procedure PatchRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePatchPayload()), HttpMethod::PATCH, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::PATCH);
     end;
 
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateDeletePayload()), HttpMethod::DELETE, ResponseStatus);
         ProcessResponse(ResponseMsg, HttpMethod::DELETE);
     end;
 
     local procedure ProcessResponse(ResponseMsg: HttpResponseMessage; HttpMethod: Enum System.RestClient."Http Method")
     var
-        //    SDHAPIDataMgmt: Codeunit "SDH Product API Data Mgmt.";
+        SDHCustomerAPIDataMgmt: Codeunit "SDH Customer API Data Mgmt.";
         ResponseText: Text;
     begin
         ResponseMsg.Content.ReadAs(ResponseText);
 
         if not ResponseMsg.IsSuccessStatusCode then
-            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText)
-        else
-            Message('%1', ResponseText);
-        // case HttpMethod of
-        //     HttpMethod::GET:
-        //         SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, false);
-        //     HttpMethod::POST:
-        //         SDHAPIDataMgmt.WriteRecordinDatabase(ResponseText, true);
-        //     HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
-        //         Message('%1', ResponseText);
-        // end;
+            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText);
+
+        case HttpMethod of
+            HttpMethod::GET:
+                SDHCustomerAPIDataMgmt.ProcessGetResponse(ResponseText);
+            HttpMethod::POST:
+                SDHCustomerAPIDataMgmt.ProcessGetResponse(ResponseText);
+            HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
+                Message('%1', ResponseText);
+        end;
     end;
 
     local procedure CheckMandatoryAndReset(URLToAccess: Text)
@@ -78,6 +82,24 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
         contentHeaders.Add('Accept', 'application/json');
     end;
 
+    local procedure GetHttpRequestMessage(payload: Text) RequestMessage: HttpRequestMessage
+    var
+        RequestHeader, ContentHeader : HttpHeaders;
+        HttpContent: HttpContent;
+    begin
+        RequestMessage.GetHeaders(RequestHeader);
+        RequestHeader.Add('Authorization', GetAuthroizationHeader());
+        RequestHeader.Add('If-Match', '*');
+
+        HttpContent.WriteFrom(payload);
+        HttpContent.GetHeaders(ContentHeader);
+        ContentHeader.Remove('Content-Type');
+        ContentHeader.Add('Content-Type', 'application/json');
+
+        RequestMessage.Content(HttpContent);
+    end;
+
+
     local procedure GetAuthroizationHeader() AuthString: Text
     var
         Base64Convert: Codeunit "Base64 Convert";
@@ -101,5 +123,4 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
         client: HttpClient;
         ResponseStatus: Boolean;
         username, password : Text;
-
 }
