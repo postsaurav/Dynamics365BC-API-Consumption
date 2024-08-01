@@ -353,6 +353,7 @@ page 50000 "SDH API Handler"
                             ShowCaption = false;
                             trigger OnDrillDown()
                             begin
+                                BasicAuthReqResMgmt.SetUsernameandPassword(Username, Password);
                                 BasicAuthReqResMgmt.PostRecord(BasicAuthUrlToAccess);
                             end;
                         }
@@ -373,6 +374,7 @@ page 50000 "SDH API Handler"
                             ShowCaption = false;
                             trigger OnDrillDown()
                             begin
+                                BasicAuthReqResMgmt.SetUsernameandPassword(Username, Password);
                                 BasicAuthReqResMgmt.PutRecord(BasicAuthUrlToAccess);
                             end;
                         }
@@ -394,6 +396,7 @@ page 50000 "SDH API Handler"
                             ShowCaption = false;
                             trigger OnDrillDown()
                             begin
+                                BasicAuthReqResMgmt.SetUsernameandPassword(Username, Password);
                                 BasicAuthReqResMgmt.PatchRecord(BasicAuthUrlToAccess);
                             end;
                         }
@@ -415,6 +418,7 @@ page 50000 "SDH API Handler"
                             ShowCaption = false;
                             trigger OnDrillDown()
                             begin
+                                BasicAuthReqResMgmt.SetUsernameandPassword(Username, Password);
                                 BasicAuthReqResMgmt.DeleteRecord(BasicAuthUrlToAccess);
                             end;
                         }
