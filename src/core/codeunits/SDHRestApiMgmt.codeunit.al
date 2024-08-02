@@ -1,8 +1,9 @@
 codeunit 50000 "SDH Rest Api Mgmt."
 {
-    procedure MakeRequest(URLToAccess: Text; client: HttpClient; content: HttpContent; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
+    procedure MakeRequest(URLToAccess: Text; client: HttpClient; content: HttpContent; HttpMethod: Enum System.RestClient."Http Method") response: HttpResponseMessage
     var
         request: HttpRequestMessage;
+        ResponseStatus: Boolean;
     begin
         request.Content := content;
         request.SetRequestUri(URLToAccess);
@@ -23,9 +24,10 @@ codeunit 50000 "SDH Rest Api Mgmt."
         LogApiTransaction(URLToAccess, HttpMethod, ResponseStatus, request, response);
     end;
 
-    procedure MakeRequest(URLToAccess: Text; request: HttpRequestMessage; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
+    procedure MakeRequest(URLToAccess: Text; request: HttpRequestMessage; HttpMethod: Enum System.RestClient."Http Method") response: HttpResponseMessage
     var
         client: HttpClient;
+        ResponseStatus: Boolean;
     begin
         request.SetRequestUri(URLToAccess);
 

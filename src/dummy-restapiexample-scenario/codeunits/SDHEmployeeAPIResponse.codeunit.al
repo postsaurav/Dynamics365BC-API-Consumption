@@ -1,6 +1,45 @@
-codeunit 50003 "SDH Employee API Data Mgmt."
+codeunit 50003 "SDH Employee API Response"
 {
-    internal procedure ParseEmployeeResponse(OutputString: Text)
+    internal procedure HandleGetResponse(ResponseMsg: HttpResponseMessage)
+    begin
+        ReviewResponseStatusCode(ResponseMsg);
+        ParseEmployeeResponse(ResponseText);
+        Message('Get Processed Succesfully!');
+    end;
+
+    internal procedure HandlePostResponse(ResponseMsg: HttpResponseMessage)
+    begin
+        ReviewResponseStatusCode(ResponseMsg);
+        Message('%1', ResponseText);
+    end;
+
+    internal procedure HandlePutResponse(ResponseMsg: HttpResponseMessage)
+    begin
+        ReviewResponseStatusCode(ResponseMsg);
+        Message('%1', ResponseText);
+    end;
+
+    internal procedure HandlePatchResponse(ResponseMsg: HttpResponseMessage)
+    begin
+        ReviewResponseStatusCode(ResponseMsg);
+        Message('%1', ResponseText);
+    end;
+
+    internal procedure HandleDeleteResponse(ResponseMsg: HttpResponseMessage)
+    begin
+        ReviewResponseStatusCode(ResponseMsg);
+        Message('%1', ResponseText);
+    end;
+
+    local procedure ReviewResponseStatusCode(ResponseMsg: HttpResponseMessage)
+    begin
+        Clear(ResponseText);
+        ResponseMsg.Content.ReadAs(ResponseText);
+        if not ResponseMsg.IsSuccessStatusCode then
+            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText);
+    end;
+
+    local procedure ParseEmployeeResponse(OutputString: Text)
     var
         EmployeeJson, EmployeeObject : JsonObject;
         EmployessArray: JsonArray;
@@ -38,7 +77,6 @@ codeunit 50003 "SDH Employee API Data Mgmt."
             ResponseAge := ResultToken.AsValue().AsInteger();
 
             WriteRecordsinDatabase(ResponseID, ResponseName, ResponseSalary, ResponseAge);
-            Message('Response Processed Succesfully!');
         end;
     end;
 
@@ -64,4 +102,7 @@ codeunit 50003 "SDH Employee API Data Mgmt."
         clear(ResponseSalary);
         clear(ResponseAge);
     end;
+
+    var
+        ResponseText: Text;
 }

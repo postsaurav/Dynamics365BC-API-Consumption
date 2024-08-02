@@ -452,9 +452,9 @@ page 50000 "SDH API Handler"
     end;
 
     var
-        BasicAuthReqResMgmt: Codeunit "SDH Customer API Req Resp Mgmt";
-        APINoAuthReqResMgmt: Codeunit "SDH Product API Req Resp Mgmt";
-        DummyRestAPIReqResMgmt: Codeunit "SDH Employee API Req Resp Mgmt";
+        BasicAuthReqResMgmt: Codeunit "SDH Customer API Integration";
+        APINoAuthReqResMgmt: Codeunit "SDH Product API Integration";
+        DummyRestAPIReqResMgmt: Codeunit "SDH Employee API Integration";
         NoAuthUrlToAccess, DummyUrlToAccess, BasicAuthUrlToAccess : Text[1024];
         NoAuthResponse, DummyNoAuthResponse, BasicAuthResponse : Text[1024];
         Username, Password : Text;

@@ -1,6 +1,5 @@
-codeunit 50005 "SDH Product API Payload Mgmt."
+codeunit 50008 "SDH Customer API Payload"
 {
-
     internal procedure GenrateGetPayload() payload: Text
     begin
         payload := '';
@@ -10,8 +9,11 @@ codeunit 50005 "SDH Product API Payload Mgmt."
     var
         JsonPayload: JsonObject;
     begin
-        JsonPayload.Add('name', 'Saurav dhyani');
-        JsonPayload.Add('data', GetDataObject());
+        JsonPayload.Add('displayName', 'Saurav Dhyani');
+        JsonPayload.Add('addressLine1', 'Dehradun Uttrakhand');
+        JsonPayload.Add('addressLine2', 'India');
+        JsonPayload.Add('phoneNumber', '7812345784');
+        JsonPayload.Add('email', 'postsaurav@gmail.com');
         JsonPayload.WriteTo(payload);
     end;
 
@@ -19,30 +21,19 @@ codeunit 50005 "SDH Product API Payload Mgmt."
     var
         JsonPayload: JsonObject;
     begin
-        JsonPayload.Add('name', 'Put Request');
-        JsonPayload.Add('data', GetDataObject());
-        JsonPayload.WriteTo(payload);
     end;
 
     internal procedure GenratePatchPayload() payload: Text
     var
         JsonPayload: JsonObject;
     begin
-        JsonPayload.Add('name', 'Patch Request');
+        JsonPayload.Add('displayName', 'API Patch');
+        JsonPayload.Add('phoneNumber', '9999999999');
         JsonPayload.WriteTo(payload);
     end;
 
     internal procedure GenrateDeletePayload() payload: Text
     begin
         payload := '';
-    end;
-
-
-    local procedure GetDataObject() DataObject: JsonObject
-    begin
-        DataObject.Add('year', 1984);
-        DataObject.Add('exp', 14);
-        DataObject.Add('Product', 'Business Central');
-        DataObject.Add('City', 'Dehradun, India');
     end;
 }
