@@ -1,19 +1,17 @@
-codeunit 50007 "SDH Customer API Req Resp Mgmt"
+codeunit 50007 "SDH Customer API Integration"
 {
     procedure GetRecords(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateGetPayload()), HttpMethod::GET, ResponseStatus);
-        ProcessResponse(ResponseMsg, HttpMethod::GET);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenrateGetPayload()), HttpMethod::GET);
+        SDHCustomerAPIDataMgmt.HandleGetResponse(ResponseMsg);
     end;
 
     procedure PostRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        //MakeRequest(URLToAccess: Text; request: HttpRequestMessage; HttpMethod: Enum System.RestClient."Http Method"; var ResponseStatus: Boolean) response: HttpResponseMessage
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePostPayload()), HttpMethod::POST, ResponseStatus);
-        //ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenratePostPayload()), HttpMethod::POST, ResponseStatus);
-        ProcessResponse(ResponseMsg, HttpMethod::POST);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePostPayload()), HttpMethod::POST);
+        SDHCustomerAPIDataMgmt.HandlePostResponse(ResponseMsg);
     end;
 
     procedure PutRecord(URLToAccess: Text)
@@ -24,35 +22,15 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
     procedure PatchRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePatchPayload()), HttpMethod::PATCH, ResponseStatus);
-        ProcessResponse(ResponseMsg, HttpMethod::PATCH);
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenratePatchPayload()), HttpMethod::PATCH);
+        SDHCustomerAPIDataMgmt.HandlePatchResponse(ResponseMsg);
     end;
 
     procedure DeleteRecord(URLToAccess: Text)
     begin
         CheckMandatoryAndReset(URLToAccess);
-        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, client, GetContentwithHeader(PayloadGenerator.GenrateDeletePayload()), HttpMethod::DELETE, ResponseStatus);
-        ProcessResponse(ResponseMsg, HttpMethod::DELETE);
-    end;
-
-    local procedure ProcessResponse(ResponseMsg: HttpResponseMessage; HttpMethod: Enum System.RestClient."Http Method")
-    var
-        SDHCustomerAPIDataMgmt: Codeunit "SDH Customer API Data Mgmt.";
-        ResponseText: Text;
-    begin
-        ResponseMsg.Content.ReadAs(ResponseText);
-
-        if not ResponseMsg.IsSuccessStatusCode then
-            Error('%1 - %2', ResponseMsg.HttpStatusCode, ResponseText);
-
-        case HttpMethod of
-            HttpMethod::GET:
-                SDHCustomerAPIDataMgmt.ProcessGetResponse(ResponseText);
-            HttpMethod::POST:
-                SDHCustomerAPIDataMgmt.ProcessGetResponse(ResponseText);
-            HttpMethod::DELETE, HttpMethod::PUT, HttpMethod::PATCH:
-                Message('%1', ResponseText);
-        end;
+        ResponseMsg := SDHRestApiMgmt.MakeRequest(URLToAccess, GetHttpRequestMessage(PayloadGenerator.GenrateDeletePayload()), HttpMethod::DELETE);
+        SDHCustomerAPIDataMgmt.HandleDeleteResponse(ResponseMsg);
     end;
 
     local procedure CheckMandatoryAndReset(URLToAccess: Text)
@@ -99,7 +77,6 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
         RequestMessage.Content(HttpContent);
     end;
 
-
     local procedure GetAuthroizationHeader() AuthString: Text
     var
         Base64Convert: Codeunit "Base64 Convert";
@@ -117,7 +94,8 @@ codeunit 50007 "SDH Customer API Req Resp Mgmt"
 
     var
         SDHRestApiMgmt: Codeunit "SDH Rest API Mgmt.";
-        PayloadGenerator: Codeunit "SDH Customer API Payload Mgmt";
+        PayloadGenerator: Codeunit "SDH Customer API Payload";
+        SDHCustomerAPIDataMgmt: Codeunit "SDH Customer API Response";
         ResponseMsg: HttpResponseMessage;
         HttpMethod: Enum "Http Method";
         client: HttpClient;

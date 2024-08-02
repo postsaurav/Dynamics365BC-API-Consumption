@@ -1,4 +1,4 @@
-codeunit 50002 "SDH Employee API Payload Mgmt"
+codeunit 50002 "SDH Employee API Payload"
 {
     internal procedure GenrateGetPayload() payload: Text
     begin
